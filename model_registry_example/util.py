@@ -89,12 +89,18 @@ def publish_model_candidate_to_wb(model, model_use_case_id):
     artifact.save()
 
 def download_eval_dataset_from_wb(model_use_case_id="mnist", version="latest"):
-    artifact = wandb.run.use_artifact("{}:{}".format("{}_ds".format(model_use_case_id), version))
+    artifact = wandb.run.use_artifact("{}:{}".format("{}_ds".format(model_use_case_id), version), use_as="dataset")
     print("::util.download_eval_dataset_from_wb:: Downloading latest validation dataset {}".format(artifact.name))
     eval_table = artifact.get("eval_table")
     x_eval = eval_table.get_column("x_eval", convert_to="numpy")
     y_eval = eval_table.get_column("y_eval", convert_to="numpy")
     return x_eval, y_eval, artifact
+
+def get_eval_dataset_from_wb(api, model_use_case_id="mnist", version="latest"):
+    artifact_versions = api.artifact_versions(type_name="dataset", name="{}_ds".format(model_use_case_id))
+    for artifact in artifact_versions:
+        if version in artifact.aliases or version == artifact.version:
+            return artifact
 
 
 def get_new_model_candidates_from_wb(project, model_use_case_id, metric_key):
@@ -118,6 +124,13 @@ def _get_model_candidates_from_wb(project, model_use_case_id):
 
 def evaluate_model(model_artifact, x_eval, y_eval):
     art = wandb.run.use_artifact(model_artifact)
+    model = keras.models.load_model(art.get_path("model.h5").download())
+    y_eval = keras.utils.to_categorical(y_eval, 10)
+    (loss, _) = model.evaluate(x_eval, y_eval)
+    return art, loss
+
+def evaluate_model_by_name(model_name, x_eval, y_eval):
+    art = wandb.run.use_artifact(model_name, use_as="model")
     model = keras.models.load_model(art.get_path("model.h5").download())
     y_eval = keras.utils.to_categorical(y_eval, 10)
     (loss, _) = model.evaluate(x_eval, y_eval)
