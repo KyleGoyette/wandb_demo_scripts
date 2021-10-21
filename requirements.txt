@@ -1,6 +1,6 @@
+pillow
 wandb
 keras
 tensorflow
 sklearn
 numpy
-pillow
