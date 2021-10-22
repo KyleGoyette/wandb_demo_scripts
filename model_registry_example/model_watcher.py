@@ -74,7 +74,7 @@ class ModelWatcher:
                 print("Checking for new datasets to evaluate models on...")
                 # check for new dataset, if so test all candidates
                 if dataset.version != self.dataset_version:
-                    candidates = [item for _, item in self.all_model_candidates.keys()]
+                    candidates = [item for _, item in self.all_model_candidates.items()]
                     self.enqueue_model_evals(candidates, dataset)
                     self.dataset_version = dataset.version
                     continue
