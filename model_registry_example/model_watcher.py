@@ -5,6 +5,7 @@
 import wandb
 from wandb.sdk.launch.launch_add import launch_add
 import util
+import subprocess
 import time
 
 
@@ -12,11 +13,16 @@ project             = "model_registry_example"
 model_use_case_id   = "mnist"
 job_type            = "model_trainer"
 uri                 = "https://github.com/KyleGoyette/wandb_demo_scripts.git"
+auto_launch_agent   = True
 
 class ModelWatcher:
     def __init__(self):
         api = wandb.apis.PublicApi()
         self.api = api
+        self.process = None
+        if auto_launch_agent:
+            cmd = ["wandb", "launch-agent", project]
+            self.process = subprocess.Popen(cmd, stdout=None, stderr=None, stdin=None, close_fds=True)
         dataset = util.get_eval_dataset_from_wb(api, f"{project}/{model_use_case_id}")
         self.dataset_version = dataset.version
         model_artifact_versions = api.artifact_versions(type_name="model",
@@ -93,6 +99,8 @@ class ModelWatcher:
                 time.sleep(3)
             except KeyboardInterrupt:
                 print("Closing model watcher...")
+                if self.process is not None:
+                    self.process.terminate()
                 break
 
 x = ModelWatcher()
