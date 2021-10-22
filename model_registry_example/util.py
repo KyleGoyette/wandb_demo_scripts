@@ -134,7 +134,7 @@ def evaluate_model_by_name(model_name, x_eval, y_eval):
     model = keras.models.load_model(art.get_path("model.h5").download())
     y_eval = keras.utils.to_categorical(y_eval, 10)
     (loss, _) = model.evaluate(x_eval, y_eval)
-    return loss
+    return art, loss
 
 
 def save_metric_to_model_in_wb(model, metric, score):    
