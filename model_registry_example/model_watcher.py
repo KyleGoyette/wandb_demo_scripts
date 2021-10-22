@@ -22,9 +22,16 @@ class ModelWatcher:
         model_artifact_versions = api.artifact_versions(type_name="model",
                                                         name=f"{project}/{model_use_case_id}_model_candidates")
         self._arti_versions_len = len(model_artifact_versions)
-        self.model_candidates = {}
+        self.all_model_candidates = {}
         for a in model_artifact_versions:
-            self.model_candidates[a.name] = a
+            self.all_model_candidates[a.name] = a
+
+        unevaluated_model_candidates = util.get_new_model_candidates_from_wb(
+                    project, 
+                    model_use_case_id,
+                    metric_key=f"{dataset.name}-ce_loss"
+                )
+        self.enqueue_model_evals(unevaluated_model_candidates, dataset)
 
     def enqueue_model_evals(self, candidates, dataset):
         for candidate in candidates:
@@ -57,7 +64,7 @@ class ModelWatcher:
                 entry_point="model_registry_example/launch_model_evaluator.py",
                 version="main"
             )
-            self.model_candidates.append(candidate)
+            self.all_model_candidates[candidate.name] = candidate
 
     def loop(self):
         while True:
@@ -67,7 +74,7 @@ class ModelWatcher:
                 print("Checking for new datasets to evaluate models on...")
                 # check for new dataset, if so test all candidates
                 if dataset.version != self.dataset_version:
-                    candidates = [item for _, item in self.model_candidates.keys()]
+                    candidates = [item for _, item in self.all_model_candidates.keys()]
                     self.enqueue_model_evals(candidates, dataset)
                     self.dataset_version = dataset.version
                     continue
@@ -80,7 +87,7 @@ class ModelWatcher:
                     metric_key=f"{dataset.name}-ce_loss"
                 )
                 if len(candidates) > 0:
-                    unqueued_candidates = [c for c in candidates if c.name not in self.model_candidates.keys()]
+                    unqueued_candidates = [c for c in candidates if c.name not in self.all_model_candidates.keys()]
                     self.enqueue_model_evals(unqueued_candidates, dataset)
 
                 time.sleep(3)
