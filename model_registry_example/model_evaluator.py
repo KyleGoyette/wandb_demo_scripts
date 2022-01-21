@@ -4,12 +4,12 @@
 # have not yet been evaluated on the latest evaluation set. Moreover,
 # it will also tag the best model with "production" so that other systems
 # can use it for inference.
-
+import os
 import wandb
 import util
 import argparse
 
-project             = "model_registry_example"
+project             = "model_registry_ex"
 model_use_case_id   = "mnist"
 job_type            = "evaluator"
 
@@ -25,7 +25,7 @@ candidates = util.get_new_model_candidates_from_wb(project, model_use_case_id, m
 
 # Evaluate the models and save their metrics to wb.
 for model in candidates:
-    score = util.evaluate_model(model, x_eval, y_eval)
+    _, score = util.evaluate_model(model, x_eval, y_eval)
     util.save_metric_to_model_in_wb(model, metric, score)
 
 # Finally, promote the best model to production.

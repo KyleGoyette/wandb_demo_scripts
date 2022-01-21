@@ -4,6 +4,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from wandb.keras import WandbCallback
 from sklearn.model_selection import train_test_split
+import os
 
 def generate_raw_data(train_size=60000):
     eval_size = int(train_size / 6)
@@ -90,6 +91,7 @@ def publish_model_candidate_to_wb(model, model_use_case_id):
 
 def download_eval_dataset_from_wb(model_use_case_id="mnist", version="latest"):
     artifact = wandb.run.use_artifact("{}:{}".format("{}_ds".format(model_use_case_id), version), use_as="dataset")
+    wandb.run.config.dataset = artifact
     print("::util.download_eval_dataset_from_wb:: Downloading latest validation dataset {}".format(artifact.name))
     eval_table = artifact.get("eval_table")
     x_eval = eval_table.get_column("x_eval", convert_to="numpy")
@@ -118,8 +120,12 @@ def get_new_model_candidates_from_wb(project, model_use_case_id, metric_key):
 
 
 def _get_model_candidates_from_wb(project, model_use_case_id):
-    api = wandb.Api({"project": project})
-    versions = api.artifact_versions("model", "{}_model_candidates".format(model_use_case_id))
+    base_url = os.environ.get("WANDB_BASE_URL")
+    if base_url is None:
+        api = wandb.Api({"project": project, "entity": "kyle"})
+    else:
+        api = wandb.Api({"project": project, "entity": "kyle", "base_url":base_url})
+    versions = api.artifact_versions("model", "mnist_model_candidates")
     return versions
 
 def evaluate_model(model_artifact, x_eval, y_eval):
@@ -131,6 +137,7 @@ def evaluate_model(model_artifact, x_eval, y_eval):
 
 def evaluate_model_by_name(model_name, x_eval, y_eval):
     art = wandb.run.use_artifact(model_name, use_as="model")
+    wandb.run.config.model = art
     model = keras.models.load_model(art.get_path("model.h5").download())
     y_eval = keras.utils.to_categorical(y_eval, 10)
     (loss, _) = model.evaluate(x_eval, y_eval)

@@ -9,7 +9,7 @@ import subprocess
 import time
 
 
-project             = "model_registry_example"
+project             = "model_registry_ex"
 model_use_case_id   = "mnist"
 job_type            = "model_trainer"
 uri                 = "https://github.com/KyleGoyette/wandb_demo_scripts.git"
