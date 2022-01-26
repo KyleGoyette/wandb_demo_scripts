@@ -15,7 +15,6 @@ job_type            = "model_trainer"
 # First, we launch a run which registers this workload with WandB.
 parser = argparse.ArgumentParser()
 parser.add_argument('--batch_size',         type=int,   default=128)
-parser.add_argument('train')
 parser.add_argument('--epochs',             type=int,   default=5)
 parser.add_argument('--optimizer',          type=str,   default="adam")
 parser.add_argument('--validation_split',   type=float, default=0.1)
