@@ -27,8 +27,11 @@ x_train, y_train = util.download_training_dataset_from_wb(model_use_case_id)
 
 # Then we train a model using this data. For simplicity, we use a sequential model.
 model = util.build_and_train_model(x_train, y_train, config=run.config)
-os.makedirs("/opt/ml/model", exist_ok=True)
-model.save(f"/opt/ml/model/{model_use_case_id}_model.h5")
+try:
+    os.makedirs("/opt/ml/model", exist_ok=True)
+    model.save(f"/opt/ml/model/{model_use_case_id}_model.h5")
+except:
+    pass
 
 # Finally, we publish the model to WandB. This will create a new artifact version
 # that serves as a "candidate" model for this use case.
