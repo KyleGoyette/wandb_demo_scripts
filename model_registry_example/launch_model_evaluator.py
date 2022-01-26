@@ -17,4 +17,4 @@ model_artifact, score = util.evaluate_model_by_name(model_name, x_eval, y_eval)
 util.save_metric_to_model_in_wb(model_artifact, metric, score)
 
 # Finally, promote the best model to production.
-util.promote_best_model_in_wb(project, model_use_case_id, metric)
+#util.promote_best_model_in_wb(project, model_use_case_id, metric)
