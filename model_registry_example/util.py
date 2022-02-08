@@ -122,9 +122,9 @@ def get_new_model_candidates_from_wb(project, model_use_case_id, metric_key):
 def _get_model_candidates_from_wb(project, model_use_case_id):
     base_url = os.environ.get("WANDB_BASE_URL")
     if base_url is None:
-        api = wandb.Api({"project": project, "entity": "kyle"})
+        api = wandb.Api({"project": project, "entity": "kylegoyette"})
     else:
-        api = wandb.Api({"project": project, "entity": "kyle", "base_url":base_url})
+        api = wandb.Api({"project": project, "entity": "kylegoyette", "base_url":base_url})
     versions = api.artifact_versions("model", "mnist_model_candidates")
     return versions
 

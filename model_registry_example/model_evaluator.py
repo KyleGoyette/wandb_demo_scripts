@@ -21,6 +21,7 @@ x_eval, y_eval, dataset = util.download_eval_dataset_from_wb(model_use_case_id)
 
 # Next we fetch the new candidate models for this use case
 metric=f"{dataset.name}-ce_loss"
+print(metric)
 candidates = util.get_new_model_candidates_from_wb(project, model_use_case_id, metric)
 
 # Evaluate the models and save their metrics to wb.
@@ -28,6 +29,4 @@ for model in candidates:
     _, score = util.evaluate_model(model, x_eval, y_eval)
     util.save_metric_to_model_in_wb(model, metric, score)
 
-# Finally, promote the best model to production.
-#util.promote_best_model_in_wb(project, model_use_case_id, metric)
 
