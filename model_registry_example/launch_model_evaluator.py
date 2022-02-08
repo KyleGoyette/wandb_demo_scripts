@@ -2,7 +2,7 @@ import wandb
 import util
 import argparse
 
-project             = "model_registry_ex"
+project             = "launch_demo"
 model_use_case_id   = "mnist"
 job_type            = "evaluator"
 

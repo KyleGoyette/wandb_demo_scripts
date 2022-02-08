@@ -9,7 +9,7 @@ import wandb
 import util
 import argparse
 
-project             = "model_registry_ex"
+project             = "launch_demo"
 model_use_case_id   = "mnist"
 job_type            = "evaluator"
 
@@ -29,5 +29,5 @@ for model in candidates:
     util.save_metric_to_model_in_wb(model, metric, score)
 
 # Finally, promote the best model to production.
-util.promote_best_model_in_wb(project, model_use_case_id, metric)
+#util.promote_best_model_in_wb(project, model_use_case_id, metric)
 
