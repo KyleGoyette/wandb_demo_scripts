@@ -7,7 +7,7 @@ import wandb
 import util
 import argparse
 
-project             = "launch_demo"
+project             = "launch_demo_april_2022"
 model_use_case_id   = "mnist"
 job_type            = "dataset_builder"
 

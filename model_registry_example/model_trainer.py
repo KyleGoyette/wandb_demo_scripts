@@ -8,7 +8,7 @@ import util
 import argparse
 import os
 
-project             = "launch_demo"
+project             = "launch_demo_april_2022"
 model_use_case_id   = "mnist"
 job_type            = "model_trainer"
 
